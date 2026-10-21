@@ -1,0 +1,410 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Campus Clubs Events</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: sticky yellow header, hero with search, filter chips, card grid; details page = info panel + registration form side by side on wide screens. */
+:root {
+  --bg: #fff8e6;
+  --surface: #ffffff;
+  --fg: #1d1b16;
+  --muted: #6b655a;
+  --line: #eadfc0;
+  --accent: #f6c100;
+  --accent-fg: #1d1b16;
+  --ink: #1d1b16;
+  --ink-fg: #f6c100;
+  --soft: #fff1b8;
+  --ok: #17803d;
+  --bad: #c62f2f;
+  --bs: 85%; --bl: 86%; --bfg: 25%;
+  --display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+  --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17150f; --surface: #221f16; --fg: #f4efe0; --muted: #a8a190; --line: #3a3526;
+    --accent: #f6c100; --accent-fg: #1d1b16; --ink: #f4efe0; --ink-fg: #17150f; --soft: #3a3217;
+    --ok: #4cc27a; --bad: #ff7b7b; --bs: 35%; --bl: 24%; --bfg: 80%;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17150f; --surface: #221f16; --fg: #f4efe0; --muted: #a8a190; --line: #3a3526;
+  --accent: #f6c100; --accent-fg: #1d1b16; --ink: #f4efe0; --ink-fg: #17150f; --soft: #3a3217;
+  --ok: #4cc27a; --bad: #ff7b7b; --bs: 35%; --bl: 24%; --bfg: 80%;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 40px;
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+.wrap { max-width: 1080px; margin: 0 auto; }
+
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding: 12px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px));
+  background: var(--accent); color: var(--accent-fg);
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--accent); z-index: 10; }
+header.top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-weight: 800; font-size: 1.35rem; letter-spacing: -.02em; background: none; border: 0; padding: 0; color: inherit; }
+.brand b { background: var(--accent-fg); color: var(--accent); padding: 0 .35em; border-radius: 4px; margin-left: .15em; }
+nav { display: flex; gap: 6px; }
+nav button { background: none; border: 0; padding: 8px 12px; border-radius: 999px; font-weight: 700; color: inherit; }
+nav button[aria-current="page"] { background: var(--accent-fg); color: var(--accent); }
+
+.hero { margin-top: 24px; padding: 32px clamp(18px, 4vw, 36px); background: var(--accent); color: var(--accent-fg); border-radius: 8px; }
+.hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(1.8rem, 6vw, 3rem); line-height: 1.05; letter-spacing: -.03em; margin: 0 0 10px; text-wrap: balance; max-width: 16ch; }
+.hero p { margin: 0 0 18px; max-width: 46ch; }
+.hero input { width: 100%; max-width: 440px; padding: 12px 18px; border-radius: 999px; border: 2px solid var(--accent-fg); background: #fffdf5; color: #1d1b16; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0; }
+.chip { padding: 7px 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font-weight: 700; font-size: .9rem; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--ink-fg); border-color: var(--ink); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; transition: transform .18s, box-shadow .18s; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,.12); }
+.banner { height: 104px; display: flex; align-items: flex-end; padding: 10px 14px; background: hsl(var(--h) var(--bs) var(--bl)); color: hsl(var(--h) 45% var(--bfg)); font-family: var(--display); font-weight: 800; font-size: 3.2rem; line-height: .85; letter-spacing: -.04em; }
+.card .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.tag { align-self: flex-start; background: var(--soft); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
+.card h3 { margin: 4px 0 0; font-family: var(--display); font-size: 1.2rem; letter-spacing: -.01em; }
+.meta { margin: 0; color: var(--muted); font-size: .88rem; }
+.foot { margin-top: auto; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.seats { font-size: .82rem; font-weight: 700; color: var(--ok); font-variant-numeric: tabular-nums; }
+.seats.low { color: var(--bad); }
+.btn { background: var(--ink); color: var(--ink-fg); border: 0; padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: .92rem; }
+.btn:hover { opacity: .88; }
+.btn.ghost { background: transparent; color: var(--fg); border: 2px solid var(--fg); }
+.empty { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px 0; }
+
+.back { margin: 22px 0 14px; background: none; border: 0; padding: 4px 0; font-weight: 700; }
+.back:hover { text-decoration: underline; }
+.details { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 860px) { .details { grid-template-columns: 1.15fr 1fr; align-items: start; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 22px; min-width: 0; }
+.panel .banner { height: 150px; border-radius: 6px; margin-bottom: 16px; font-size: 5rem; }
+.panel h1 { font-family: var(--display); font-size: 1.9rem; letter-spacing: -.02em; line-height: 1.1; margin: 10px 0; }
+.panel h2 { font-family: var(--display); font-size: 1.25rem; margin: 0 0 14px; }
+.info { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 16px 0 0; }
+.info dt { font-weight: 700; }
+.info dd { margin: 0; }
+
+form { display: grid; gap: 14px; }
+.field label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 4px; }
+.field input, .field select, .field textarea { width: 100%; padding: 11px 12px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--bg); resize: vertical; }
+.field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--bad); }
+.hostpanel { max-width: 760px; margin: 0 auto; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .two { grid-template-columns: 1fr; } }
+details { margin-top: 6px; }
+summary { cursor: pointer; font-weight: 700; font-size: .88rem; }
+.err { color: var(--bad); font-size: .82rem; min-height: 1.1em; margin-top: 3px; }
+.done { text-align: center; padding: 8px 0; }
+.done h2 { margin-bottom: 8px; }
+.done p { color: var(--muted); margin: 0 0 16px; }
+.check { width: 56px; height: 56px; border-radius: 50%; background: var(--ok); color: var(--bg); display: inline-grid; place-items: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; }
+
+.regs { display: grid; gap: 12px; }
+.reg { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.reg > div { min-width: 0; overflow-wrap: anywhere; }
+h2.page { font-family: var(--display); font-size: 1.8rem; margin: 0 0 16px; }
+
+footer { margin-top: 36px; text-align: center; color: var(--muted); font-size: .85rem; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 140%); background: var(--ink); color: var(--ink-fg); padding: 11px 20px; border-radius: 999px; font-weight: 700; transition: transform .25s; z-index: 20; max-width: 92vw; text-align: center; }
+.toast.show { transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="top"><div class="wrap">
+  <button class="brand" data-go="home">Campus<b>Clubs</b></button>
+  <nav aria-label="Main">
+    <button data-go="home" id="nav-home">Events</button>
+    <button data-go="host" id="nav-host">Host an event</button>
+    <button data-go="regs" id="nav-regs">My registrations</button>
+  </nav>
+</div></header>
+
+<main class="wrap" id="app"></main>
+<footer class="wrap"><p>Campus Clubs Events · 2026</p></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const BASE = [
+  { id: 1, title: "HackNight 2026", club: "Coding Club", category: "Tech", h: 215, date: "2026-11-07", time: "6:00 PM", venue: "Computer Lab 2", seats: 60,
+    description: "A 12-hour overnight hackathon. Form teams of up to 4, build something creative and pitch it to the judges. Snacks and swag included." },
+  { id: 2, title: "Takshashila", club: "Cultural Committee", category: "Cultural", h: 330, date: "2026-11-12", time: "9:00 AM", venue: "Main Auditorium", seats: 200,
+    description: "The flagship college fest with competitions, performances and stalls across campus. Register to take part in events or attend as a visitor." },
+  { id: 3, title: "Inter-Department Football", club: "Sports Club", category: "Sports", h: 140, date: "2026-11-15", time: "8:00 AM", venue: "College Ground", seats: 120,
+    description: "Knockout football tournament between departments. Register as a player or as a supporter." },
+  { id: 4, title: "Photography Walk", club: "Photo Club", category: "Arts", h: 40, date: "2026-11-18", time: "6:30 AM", venue: "Campus Garden", seats: 30,
+    description: "Capture the sunrise around campus with tips from senior members. Bring your phone or camera." },
+  { id: 5, title: "Intro to AI Workshop", club: "AI Club", category: "Tech", h: 265, date: "2026-11-21", time: "2:00 PM", venue: "Seminar Hall", seats: 80,
+    description: "A hands-on beginner workshop covering machine learning basics and a small project you build live." },
+  { id: 6, title: "Talentina", club: "Cultural Committee", category: "Cultural", h: 355, date: "2026-11-25", time: "4:00 PM", venue: "Open Quad", seats: 150,
+    description: "The campus talent showcase. Sing, dance, act, play an instrument or show any other talent on stage. Register to perform or to watch." },
+  { id: 7, title: "Startup Pitch Day", club: "E-Cell", category: "Business", h: 22, date: "2026-12-02", time: "11:00 AM", venue: "Conference Room", seats: 50,
+    description: "Pitch your startup idea to alumni founders and win seed mentoring. Audience seats are open too." },
+  { id: 8, title: "Chess Championship", club: "Chess Club", category: "Sports", h: 170, date: "2026-12-05", time: "10:00 AM", venue: "Library Hall", seats: 40,
+    description: "Swiss-system rapid tournament open to all skill levels. Bring your own board if you can." },
+  { id: 9, title: "Code Rush", club: "Coding Club", category: "Tech", h: 195, date: "2026-12-09", time: "10:00 AM", venue: "Computer Lab 1", seats: 70,
+    description: "A timed competitive coding contest. Solve as many problems as you can in 3 hours. Individual entries, prizes for the top three." },
+  { id: 10, title: "Canvas Painting Workshop", club: "Art Club", category: "Arts", h: 10, date: "2026-12-12", time: "3:00 PM", venue: "Art Room", seats: 35,
+    description: "Learn acrylic painting basics and finish your own canvas to take home. Brushes, paints and canvas are provided." },
+  { id: 11, title: "Paper Presentation Contest", club: "Tech Society", category: "Tech", h: 245, date: "2026-12-16", time: "9:30 AM", venue: "Seminar Hall", seats: 60,
+    description: "Present your research or project idea in 7 minutes to a panel of faculty judges. Solo or teams of 2." },
+  { id: 12, title: "Moonlight Fest", club: "Cultural Committee", category: "Cultural", h: 290, date: "2026-12-19", time: "6:30 PM", venue: "Open Air Stage", seats: 250,
+    description: "An evening of live music, DJ and food stalls under the night sky. Open to all students." },
+  { id: 13, title: "Yuvenza", club: "Student Council", category: "Cultural", h: 310, date: "2026-12-22", time: "10:00 AM", venue: "Main Auditorium", seats: 180,
+    description: "The youth festival with dance, music, drama and art competitions between departments. Register as a participant or an audience member." }
+];
+const HKEY = "clubEventsHosted";
+let hmem = [];
+const getHosted = () => { try { return JSON.parse(localStorage.getItem(HKEY)) || []; } catch (e) { return hmem; } };
+const saveHosted = (l) => { hmem = l; try { localStorage.setItem(HKEY, JSON.stringify(l)); } catch (e) {} };
+const allEvents = () => BASE.concat(getHosted());
+const CATS = ["Tech", "Cultural", "Sports", "Arts", "Business"];
+const KEY = "clubEventRegistrations";
+const getRegs = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return mem; } };
+let mem = [];
+const saveRegs = (r) => { mem = r; try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (e) {} };
+const seatsLeft = (ev) => ev.seats - getRegs().filter(r => r.eventId === ev.id).length;
+const fmtDate = (d) => new Date(d + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const initials = (club) => club.split(" ").map(w => w[0]).join("").slice(0, 2);
+
+const app = document.getElementById("app");
+const S = { view: "home", id: null, search: "", cat: "All" };
+
+function toast(m) { const t = document.getElementById("toast"); t.textContent = m; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2600); }
+function go(view, id) { S.view = view; S.id = id || null; window.scrollTo(0, 0); render(); }
+document.addEventListener("click", (e) => {
+  const g = e.target.closest("[data-go]");
+  if (g) go(g.dataset.go, g.dataset.id ? Number(g.dataset.id) : null);
+});
+
+function render() {
+  document.getElementById("nav-home").setAttribute("aria-current", S.view === "home" || S.view === "event" ? "page" : "false");
+  document.getElementById("nav-regs").setAttribute("aria-current", S.view === "regs" ? "page" : "false");
+  document.getElementById("nav-host").setAttribute("aria-current", S.view === "host" ? "page" : "false");
+  if (S.view === "event") renderEvent(); else if (S.view === "regs") renderMine(); else if (S.view === "host") renderHost(); else renderHome();
+}
+
+function to12h(t) { const [h, m] = t.split(":").map(Number); return ((h % 12) || 12) + ":" + String(m).padStart(2, "0") + " " + (h >= 12 ? "PM" : "AM"); }
+
+function renderHost() {
+  const today = new Date().toISOString().slice(0, 10);
+  app.innerHTML = `
+    <button class="back" data-go="home">← All events</button>
+    <section class="panel hostpanel">
+      <h2 class="page">Host an event</h2>
+      <p class="meta" style="margin-bottom:16px">Organising something for your club? Fill in the details and it appears on the events page straight away, ready for others to register.</p>
+      <form id="hostform" novalidate>
+        <div class="two">
+          <div class="field"><label for="h-name">Your name</label><input id="h-name" name="oname" autocomplete="name"><div class="err"></div></div>
+          <div class="field"><label for="h-email">Your email</label><input id="h-email" name="oemail" type="email" autocomplete="email"><div class="err"></div></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="h-phone">Your phone number</label><input id="h-phone" name="ophone" type="tel" inputmode="numeric"><div class="err"></div></div>
+          <div class="field"><label for="h-club">Club or team name</label><input id="h-club" name="club"><div class="err"></div></div>
+        </div>
+        <div class="field"><label for="h-title">Event name</label><input id="h-title" name="title"><div class="err"></div></div>
+        <div class="two">
+          <div class="field"><label for="h-cat">Category</label>
+            <select id="h-cat" name="category"><option value="">Select category</option>${CATS.map(c => `<option>${c}</option>`).join("")}</select><div class="err"></div></div>
+          <div class="field"><label for="h-seats">Number of seats</label><input id="h-seats" name="seats" type="number" min="1" max="2000" inputmode="numeric"><div class="err"></div></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="h-date">Date</label><input id="h-date" name="date" type="date" min="${today}"><div class="err"></div></div>
+          <div class="field"><label for="h-time">Time</label><input id="h-time" name="time" type="time"><div class="err"></div></div>
+        </div>
+        <div class="field"><label for="h-venue">Venue</label><input id="h-venue" name="venue"><div class="err"></div></div>
+        <div class="field"><label for="h-desc">What is the event about?</label><textarea id="h-desc" name="description" rows="4"></textarea><div class="err"></div></div>
+        <button class="btn" type="submit">Publish event</button>
+      </form>
+    </section>`;
+  const f = document.getElementById("hostform");
+  const rules = {
+    oname: v => v.trim().length >= 3 ? "" : "Enter your full name.",
+    oemail: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "" : "Enter a valid email address.",
+    ophone: v => /^[6-9]\d{9}$/.test(v.trim()) ? "" : "Enter a 10-digit mobile number.",
+    club: v => v.trim().length >= 2 ? "" : "Enter your club or team name.",
+    title: v => v.trim().length >= 3 ? "" : "Enter the event name.",
+    category: v => v ? "" : "Select a category.",
+    seats: v => Number(v) >= 1 ? "" : "Enter the number of seats.",
+    date: v => v ? "" : "Pick a date.",
+    time: v => v ? "" : "Pick a time.",
+    venue: v => v.trim().length >= 2 ? "" : "Enter the venue.",
+    description: v => v.trim().length >= 15 ? "" : "Add a short description (at least 15 characters)."
+  };
+  const check = (n) => { const el = f.elements[n], m = rules[n](el.value), box = el.closest(".field");
+    box.classList.toggle("invalid", !!m); box.querySelector(".err").textContent = m; return !m; };
+  Object.keys(rules).forEach(n => f.elements[n].addEventListener("blur", () => check(n)));
+  f.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!Object.keys(rules).map(check).every(Boolean)) { toast("Please fix the highlighted fields."); return; }
+    const v = (n) => f.elements[n].value.trim();
+    const title = v("title");
+    let hue = 0; for (const ch of title) hue = (hue * 31 + ch.charCodeAt(0)) % 360;
+    const list = getHosted();
+    const id = Date.now();
+    list.push({ id, hosted: true, title, club: v("club"), category: v("category"), h: hue, date: v("date"), time: to12h(v("time")),
+      venue: v("venue"), seats: Number(v("seats")), description: v("description"),
+      organiser: { name: v("oname"), email: v("oemail").toLowerCase(), phone: v("ophone") } });
+    saveHosted(list);
+    S.search = ""; S.cat = "All";
+    toast("Event published");
+    go("event", id);
+  });
+}
+
+function renderMine() {
+  renderRegs();
+  const mine = getHosted();
+  app.insertAdjacentHTML("beforeend", `
+    <h2 class="page" style="margin-top:32px">Events I'm hosting</h2>
+    <div class="regs">${mine.length ? mine.map((ev, i) => {
+      const n = getRegs().filter(r => r.eventId === ev.id);
+      return `<div class="reg"><div><strong>${esc(ev.title)}</strong>
+        <p class="meta">${fmtDate(ev.date)} · ${ev.time} · ${n.length} of ${ev.seats} registered</p>
+        ${n.length ? `<details><summary>See registered people</summary>${n.map(r => `<p class="meta">${esc(r.name)} · ${esc(r.email)} · ${esc(r.phone)} · ${esc(r.dept)}, ${esc(r.year)}</p>`).join("")}</details>` : ""}</div>
+        <button class="btn ghost" data-del="${ev.id}">Delete event</button></div>`; }).join("") : `<p class="empty">You haven't hosted an event yet. <button class="back" data-go="host" style="margin:0;text-decoration:underline">Host one now</button></p>`}</div>`);
+  app.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
+    const id = Number(b.dataset.del);
+    saveHosted(getHosted().filter(e => e.id !== id));
+    saveRegs(getRegs().filter(r => r.eventId !== id));
+    toast("Event deleted"); renderMine();
+  }));
+}
+
+function renderHome() {
+  const cats = ["All", ...new Set(allEvents().map(e => e.category))];
+  app.innerHTML = `
+    <section class="hero">
+      <h1>What's on at campus</h1>
+      <p>Browse events from every college club, check the details and register in under a minute.</p>
+      <input id="search" type="search" placeholder="Search events or clubs" aria-label="Search events" value="${esc(S.search)}">
+    </section>
+    <div class="filters" role="group" aria-label="Filter by category">
+      ${cats.map(c => `<button class="chip" data-cat="${c}" aria-pressed="${c === S.cat}">${c}</button>`).join("")}
+    </div>
+    <div class="grid" id="grid"></div>`;
+  document.getElementById("search").addEventListener("input", (e) => { S.search = e.target.value; cards(); });
+  app.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+    S.cat = b.dataset.cat;
+    app.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b));
+    cards();
+  }));
+  cards();
+}
+function cards() {
+  const q = S.search.trim().toLowerCase();
+  const list = allEvents().filter(e => (S.cat === "All" || e.category === S.cat) && (e.title + " " + e.club).toLowerCase().includes(q));
+  const grid = document.getElementById("grid");
+  if (!list.length) { grid.innerHTML = `<p class="empty">No events match. Try another search or category.</p>`; return; }
+  grid.innerHTML = list.map(e => {
+    const left = seatsLeft(e);
+    return `<article class="card">
+      <div class="banner" style="--h:${e.h}" aria-hidden="true">${initials(e.club)}</div>
+      <div class="body">
+        <span class="tag">${e.category}</span>
+        <h3>${esc(e.title)}</h3>
+        <p class="meta">${esc(e.club)}</p>
+        <p class="meta">${fmtDate(e.date)} · ${e.time}</p>
+        <p class="meta">${esc(e.venue)}</p>
+        <div class="foot">
+          <span class="seats ${left < 10 ? "low" : ""}">${left > 0 ? left + " seats left" : "Full"}</span>
+          <button class="btn" data-go="event" data-id="${e.id}">View details</button>
+        </div>
+      </div></article>`;
+  }).join("");
+}
+
+function renderEvent() {
+  const ev = allEvents().find(e => e.id === S.id);
+  if (!ev) { go("home"); return; }
+  const left = seatsLeft(ev);
+  app.innerHTML = `
+    <button class="back" data-go="home">← All events</button>
+    <div class="details">
+      <section class="panel">
+        <div class="banner" style="--h:${ev.h}" aria-hidden="true">${initials(ev.club)}</div>
+        <span class="tag">${ev.category}</span>
+        <h1>${esc(ev.title)}</h1>
+        <p>${esc(ev.description)}</p>
+        <dl class="info">
+          <dt>Organised by</dt><dd>${esc(ev.club)}${ev.organiser ? " (" + esc(ev.organiser.name) + ")" : ""}</dd>
+          <dt>Date</dt><dd>${fmtDate(ev.date)}</dd>
+          <dt>Time</dt><dd>${ev.time}</dd>
+          <dt>Venue</dt><dd>${esc(ev.venue)}</dd>
+          <dt>Seats</dt><dd><span class="seats ${left < 10 ? "low" : ""}">${left > 0 ? left + " of " + ev.seats + " left" : "Full"}</span></dd>
+        </dl>
+      </section>
+      <section class="panel" id="regpanel">
+        <h2>Register for this event</h2>
+        ${left > 0 ? `
+        <form id="regform" novalidate>
+          <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name"><div class="err"></div></div>
+          <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email"><div class="err"></div></div>
+          <div class="field"><label for="f-phone">Phone number</label><input id="f-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel"><div class="err"></div></div>
+          <div class="field"><label for="f-dept">Department</label>
+            <select id="f-dept" name="dept"><option value="">Select department</option><option>CSE</option><option>IT</option><option>ECE</option><option>EEE</option><option>Mechanical</option><option>Civil</option><option>Other</option></select><div class="err"></div></div>
+          <div class="field"><label for="f-year">Year of study</label>
+            <select id="f-year" name="year"><option value="">Select year</option><option>1st year</option><option>2nd year</option><option>3rd year</option><option>4th year</option></select><div class="err"></div></div>
+          <button class="btn" type="submit">Register now</button>
+        </form>` : `<p class="empty">This event is full.</p>`}
+      </section>
+    </div>`;
+  if (left > 0) bindForm(ev);
+}
+
+function bindForm(ev) {
+  const f = document.getElementById("regform");
+  const rules = {
+    name: v => v.trim().length >= 3 ? "" : "Enter your full name (at least 3 characters).",
+    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "" : "Enter a valid email address.",
+    phone: v => /^[6-9]\d{9}$/.test(v.trim()) ? "" : "Enter a 10-digit mobile number.",
+    dept: v => v ? "" : "Select your department.",
+    year: v => v ? "" : "Select your year."
+  };
+  const check = (n) => { const el = f.elements[n], m = rules[n](el.value), box = el.closest(".field");
+    box.classList.toggle("invalid", !!m); box.querySelector(".err").textContent = m; return !m; };
+  Object.keys(rules).forEach(n => f.elements[n].addEventListener("blur", () => check(n)));
+  f.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!Object.keys(rules).map(check).every(Boolean)) return;
+    const email = f.elements.email.value.trim().toLowerCase();
+    const regs = getRegs();
+    if (regs.some(r => r.eventId === ev.id && r.email === email)) { toast("This email is already registered for this event."); return; }
+    if (seatsLeft(ev) <= 0) { toast("Sorry, the event just filled up."); renderEvent(); return; }
+    const name = f.elements.name.value.trim();
+    regs.push({ eventId: ev.id, email, name, phone: f.elements.phone.value.trim(), dept: f.elements.dept.value, year: f.elements.year.value });
+    saveRegs(regs);
+    document.getElementById("regpanel").innerHTML = `<div class="done"><div class="check">✓</div><h2>You're registered</h2>
+      <p>Thanks, ${esc(name.split(" ")[0])}. See you at ${esc(ev.title)} on ${fmtDate(ev.date)}.</p>
+      <button class="btn" data-go="home">Browse more events</button></div>`;
+    toast("Registration successful");
+  });
+}
+
+function renderRegs() {
+  const regs = getRegs();
+  app.innerHTML = `<button class="back" data-go="home">← All events</button><h2 class="page">My registrations</h2>
+    <div class="regs">${regs.length ? regs.map((r, i) => { const ev = allEvents().find(e => e.id === r.eventId); if (!ev) return "";
+      return `<div class="reg"><div><strong>${esc(ev.title)}</strong><p class="meta">${esc(r.name)} · ${esc(r.email)} · ${fmtDate(ev.date)}</p></div>
+        <button class="btn ghost" data-cancel="${i}">Cancel</button></div>`; }).join("") : `<p class="empty">You haven't registered for any events yet.</p>`}</div>`;
+  app.querySelectorAll("[data-cancel]").forEach(b => b.addEventListener("click", () => {
+    const all = getRegs(); all.splice(Number(b.dataset.cancel), 1); saveRegs(all); toast("Registration cancelled"); renderRegs();
+  }));
+}
+render();
+</script>
+
+</body></html>
